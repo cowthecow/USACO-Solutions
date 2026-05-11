@@ -44,11 +44,12 @@ int indeg [MAXN];
 int cycle [MAXN];
 
 int dp [MAXN][2]; //dp 1 is cur self, dp 0 is cur not loop yet
-int sdp [MAXN][2];
+vi comp;
 
 //two kinds of dfs are neccesary, otherwise will overlap
 //they have identical role, except they use separate dp arrays
 int dfs(int v) {
+    comp.pb(v);
     vis[v]=1;
 
     dp[v][0]=0;
@@ -69,28 +70,6 @@ int dfs(int v) {
     
     return dp[v][1];
 }
-
-int sdfs(int v) {
-    svis[v]=1;
-
-    sdp[v][0]=0;
-    sdp[v][1]=0;
-    if(nxt[v]!=v)
-        sdp[v][1]+=cost[v];
-
-    if(!par[v].empty()) {
-        for(int to:par[v]) {
-            if(svis[to])
-                continue;
-
-            sdfs(to);
-            sdp[v][1]+=min(sdp[to][0], sdp[to][1]);
-            sdp[v][0]+=sdp[to][1];
-        }
-    }
-    return sdp[v][1];
-}
-
 
 void solve() {
     cin>>n;
@@ -116,10 +95,9 @@ void solve() {
             Q.push(nxt[v]);
     }
 
-    for(int i=1;i<=n;i++) {
+    for(int i=1;i<=n;i++) 
         fill(dp[i], dp[i]+2, INF);
-        fill(sdp[i], sdp[i]+2, INF);
-    }
+    
 
     //for each cycle node, visit its whole component using the prev array, dp solve for that
     int ans=0;
@@ -127,9 +105,15 @@ void solve() {
         if(cycle[i]&&!vis[i]) {
             //do the dfs now, spam the dp
             //then proceed to do dfs twice on the secondary dp array
+            comp.clear();
             int cur=dfs(i);
+
             if(nxt[i]!=i) {
-                cur=min(cur, sdfs(nxt[i]));
+                for(int j:comp) {
+                    vis[j]=0;
+                    dp[j][0]=dp[j][1]=INF;
+                }
+                cur=min(cur, dfs(nxt[i]));
             }
             ans+=cur;
         }
