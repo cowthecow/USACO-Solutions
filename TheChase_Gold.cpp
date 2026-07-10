@@ -150,6 +150,22 @@ void solve() {
 
             if(fdist[j]>=diff)
                 ans[j]=fdist[j]-diff;
+
+            // cout<<j<<":"<<opt<<"\n";
+            // cout<<"options:";
+            // for(int x:unban) cout<<x<<" ";
+            // cout<<"\n";
+
+            // for(int check=fdist[j];check>=0;check--) {
+            //     //if we wait check, will we end up meeting
+            //     int rhs=(cydist[j]-cyst[j])+check;
+            //     rhs=(rhs%m+m)%m;
+
+            //     if(banned.find(rhs)==banned.end()) {
+            //         ans[j]=check;
+            //         break;
+            //     }
+            // }
         }
     }
 
